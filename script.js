@@ -55,11 +55,18 @@ class FlowFieldEffect{
     this.gradient.addColorStop("0.9", "#ffff33");
   }
   #drawLine(angle, x, y) {
-    const length = 300;
+    let positionX = x;
+    let positionY = y;
+    let dx = mouse.x - positionX;
+    let dy = mouse.y - positionY;
+    let distance = (dx * dx + dy * dy);
+    let length = distance / 10000;
+    if (distance > 300000) distance = 300000;
     this.#ctx.beginPath();
     this.#ctx.moveTo(x, y);
     this.#ctx.lineTo(
-      x + Math.cos(angle) * 30, y + Math.sin(angle) * 30 
+      x + Math.cos(angle) * length,
+      y + Math.sin(angle) * length
       );
     this.#ctx.stroke();
   }
@@ -69,6 +76,7 @@ class FlowFieldEffect{
     if (this.timer > this.interval) {
       this.#ctx.clearRect(0, 0, this.#width, this.#height);
       this.radius += this.vr;
+      if (this.radius > 5 || this.radius < -5) this.vr *= - 1;
       for (let y = 0; y < this.#height; y += this.cellSize) {
         for (let x = 0; x < this.#width; x += this.cellSize) {
           const angle = 
